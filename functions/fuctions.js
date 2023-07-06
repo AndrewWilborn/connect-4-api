@@ -5,6 +5,7 @@ const docId = "P06lG9GlRfpHhhMCuTMP"
 
 export async function joinRequest(req, res){
     const game = await coll.get();
+    // There should be a way to get this by ID
     const gameData = game.docs[0].data() // Get current data from the database
     let playerId;
     if(!gameData.inGame){ // If there isn't currently a game in progress
@@ -21,6 +22,12 @@ export async function joinRequest(req, res){
 }
 
 export async function resetGame(req, res){
-    const response = await coll.doc(docId).update({"playerIds": [0,0], "inGame": false, "activePlayer": 0, "board": [0,0,0,0,0,0,0]})
-    res.status(200).send(response)
+    const response = await coll.doc(docId).update({"playerIds": [0,0], "inGame": false, "activePlayer": 0, "board": [0,0,0,0,0,0,0]});
+    res.status(200).send(response);
+}
+
+export async function getGameState(req, res){
+    const game = await coll.get();
+    const {inGame, board, activePlayer} = game.docs[0].data();
+    res.status(200).send({"inGame": inGame, "activePlayer": activePlayer, "board": board});
 }
