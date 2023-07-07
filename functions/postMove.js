@@ -4,11 +4,19 @@ const coll = db.collection("game");
 const docId = "P06lG9GlRfpHhhMCuTMP"
 
 function validMove(moveCol, board){
+    if(moveCol >=6 || moveCol < 0){
+        return false;
+    }
+    if(board[moveCol].length >= 6){
+        return false;
+    }
     return true;
 }
 
 function getUpdatedBoard(board, activePlayer, moveCol){
-    return board;
+    const updatedBoard = [...board];
+    updatedBoard[moveCol] += activePlayer ? "R" : "Y";
+    return updatedBoard;
 }
 
 function isWinner(board){
