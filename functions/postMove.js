@@ -31,6 +31,10 @@ export async function submitMove(req, res){
     const game = await coll.get();
     const {inGame, board, activePlayer, playerIds} = game.docs[0].data();
 
+    if(!inGame){
+        res.status(401).send({ success: false, message: 'game not active'})
+    }
+
     if(playerIds[activePlayer] !== playerId){
         res.status(401).send({ success: false, message: 'invalid playerId'})
         return;
@@ -45,7 +49,7 @@ export async function submitMove(req, res){
     await coll.doc(docId).update({"board": updatedBoard});
 
     res.status(200).send(isWinner(updatedBoard)
-        ? {"board": updatedBoard, "isWinner": true}
-        : {"board": updatedBoard, "isWinner": false}
+        ? { success: true, "board": updatedBoard, "isWinner": true}
+        : { success: true, "board": updatedBoard, "isWinner": false}
     );
 }
