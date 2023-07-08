@@ -7,18 +7,21 @@ export async function joinRequest(req, res){
     const game = await coll.get();
     // There should be a way to get this by ID
     const { inGame, playerIds } = game.docs[0].data() // Get current data from the database
-    let playerId;
+    let playerId = null;
+    let player0or1 = null;
     if(!inGame){ // If there isn't currently a game in progress
         playerId = Math.floor(Math.random() * 999999999) // Generate a playerId
         if(!playerIds[0]){ // update the database with the new playerId
             await coll.doc(docId).update({"playerIds": [playerId, playerIds[1]]})
+            player0or1 = 0;
         } else {
             await coll.doc(docId).update({"playerIds": [playerIds[0], playerId], "inGame": true})
+            player0or1 = 1;
         }
     } else {
         playerId = null;
     } 
-    res.status(200).send({response: playerId})
+    res.status(200).send({response: playerId, whichPlayer: player0or1})
 }
 
 export async function resetGame(req, res){
