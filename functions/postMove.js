@@ -19,7 +19,44 @@ function getUpdatedBoard(board, activePlayer, moveCol){
     return updatedBoard;
 }
 
-function isWinner(board){
+export function isWinner(board){
+    for(let i = 0; i < 7; i++){
+        if(board[i].includes("YYYY") || board[i].includes("RRRR")){
+            return true;
+        }
+    }
+    for(let i = 0; i < 4; i++){
+        for(let j = 0; j < 6; j++){
+            if(board[i][j] === 'Y' && board[i+1][j] === 'Y' && board[i+2][j] === 'Y' && board[i+3][j] === 'Y'){
+                return true
+            }
+            if(board[i][j] === 'R' && board[i+1][j] === 'R' && board[i+2][j] === 'R' && board[i+3][j] === 'R'){
+                return true
+            }
+        }
+    }
+    // detect postive slope diagonals
+    for(let i = 0; i < 4; i++){
+        for(let j = 0; j < 3; j++){
+            if(board[i][j] === 'Y' && board[i+1][j+1] === 'Y' && board[i+2][j+2] === 'Y' && board[i+3][j+3] === 'Y'){
+                return true;
+            }
+            if(board[i][j] === 'R' && board[i+1][j+1] === 'R' && board[i+2][j+2] === 'R' && board[i+3][j+3] === 'R'){
+                return true;
+            }
+        }
+    }
+    for(let i = 0; i < 4; i++){
+        for(let j = 3; j < 6; j++){
+            if(board[i][j] === 'Y' && board[i+1][j-1] === 'Y' && board[i+2][j-2] === 'Y' && board[i+3][j-3] === 'Y'){
+                return true;
+            }
+            if(board[i][j] === 'R' && board[i+1][j-1] === 'R' && board[i+2][j-2] === 'R' && board[i+3][j-3] === 'R'){
+                return true;
+            }
+        }
+    }
+    
     return false;
 }
 
@@ -45,10 +82,17 @@ export async function submitMove(req, res){
         return;
     }
     // If move is valid, apply it to the board
-    const updatedBoard = getUpdatedBoard(board, activePlayer, moveCol)
-    await coll.doc(docId).update({"board": updatedBoard, "activePlayer": activePlayer?0:1});
+    
 
-    res.status(200).send(isWinner(updatedBoard)
+    const updatedBoard = getUpdatedBoard(board, activePlayer, moveCol)
+    const isWinner = isWinner(updatedBoard)
+    activePlayer = activePlayer?0:1
+    if(isWinner){
+        activePlayer = 2;
+    }
+    await coll.doc(docId).update({"board": updatedBoard, "activePlayer": activePlayer});
+
+    res.status(200).send(isWinner
         ? { success: true, "board": updatedBoard, "isWinner": true}
         : { success: true, "board": updatedBoard, "isWinner": false}
     );
