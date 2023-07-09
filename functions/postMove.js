@@ -46,7 +46,7 @@ export async function submitMove(req, res){
     }
     // If move is valid, apply it to the board
     const updatedBoard = getUpdatedBoard(board, activePlayer, moveCol)
-    await coll.doc(docId).update({"board": updatedBoard});
+    await coll.doc(docId).update({"board": updatedBoard, "activePlayer": activePlayer?0:1});
 
     res.status(200).send(isWinner(updatedBoard)
         ? { success: true, "board": updatedBoard, "isWinner": true}
