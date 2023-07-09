@@ -4,7 +4,7 @@ const coll = db.collection("game");
 const docId = "P06lG9GlRfpHhhMCuTMP"
 
 function validMove(moveCol, board){
-    if(moveCol >=6 || moveCol < 0){
+    if(moveCol >= 7 || moveCol < 0){
         return false;
     }
     if(board[moveCol].length >= 6){
@@ -82,17 +82,10 @@ export async function submitMove(req, res){
         return;
     }
     // If move is valid, apply it to the board
-    
-
     const updatedBoard = getUpdatedBoard(board, activePlayer, moveCol)
-    const isWinner = isWinner(updatedBoard)
-    activePlayer = activePlayer?0:1
-    if(isWinner){
-        activePlayer = 2;
-    }
-    await coll.doc(docId).update({"board": updatedBoard, "activePlayer": activePlayer});
+    await coll.doc(docId).update({"board": updatedBoard, "activePlayer": activePlayer?0:1});
 
-    res.status(200).send(isWinner
+    res.status(200).send(isWinner(updatedBoard)
         ? { success: true, "board": updatedBoard, "isWinner": true}
         : { success: true, "board": updatedBoard, "isWinner": false}
     );
