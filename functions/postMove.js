@@ -83,10 +83,18 @@ export async function submitMove(req, res){
     }
     // If move is valid, apply it to the board
     const updatedBoard = getUpdatedBoard(board, activePlayer, moveCol)
-    await coll.doc(docId).update({"board": updatedBoard, "activePlayer": activePlayer?0:1});
 
-    res.status(200).send(isWinner(updatedBoard)
-        ? { success: true, "board": updatedBoard, "isWinner": true}
-        : { success: true, "board": updatedBoard, "isWinner": false}
-    );
+    if(isWinner(updatedBoard)){
+        await coll.doc(docId).update({"board": updatedBoard, "activePlayer": 2+activePlayer});
+        res.status(200).send({ success: true, "board": updatedBoard, "isWinner": true});
+    } else{
+        await coll.doc(docId).update({"board": updatedBoard, "activePlayer": activePlayer?0:1});
+        res.status(200).send({ success: true, "board": updatedBoard, "isWinner": false});
+    }
+    // await coll.doc(docId).update({"board": updatedBoard, "activePlayer": activePlayer?0:1});
+
+    // res.status(200).send(isWinner(updatedBoard)
+    //     ? { success: true, "board": updatedBoard, "isWinner": true}
+    //     : { success: true, "board": updatedBoard, "isWinner": false}
+    // );
 }
