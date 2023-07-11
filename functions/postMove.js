@@ -86,15 +86,9 @@ export async function submitMove(req, res){
 
     if(isWinner(updatedBoard)){
         await coll.doc(docId).update({"board": updatedBoard, "activePlayer": 2+activePlayer});
-        res.status(200).send({ success: true, "board": updatedBoard, "isWinner": true});
+        res.status(200).send({ success: true, message: "Move Sent"});
     } else{
         await coll.doc(docId).update({"board": updatedBoard, "activePlayer": activePlayer?0:1});
-        res.status(200).send({ success: true, "board": updatedBoard, "isWinner": false});
+        res.status(200).send({ success: true, message: "Move Sent"});
     }
-    // await coll.doc(docId).update({"board": updatedBoard, "activePlayer": activePlayer?0:1});
-
-    // res.status(200).send(isWinner(updatedBoard)
-    //     ? { success: true, "board": updatedBoard, "isWinner": true}
-    //     : { success: true, "board": updatedBoard, "isWinner": false}
-    // );
 }
