@@ -35,7 +35,15 @@ export async function resetGame(req, res){
 }
 
 export async function getGameState(req, res){
+    const { whichPlayer } = req.params
+    console.log(whichPlayer)
     const game = await coll.get();
-    const {inGame, board, activePlayer} = game.docs[0].data();
+    const {inGame, board, activePlayer, lastPing} = game.docs[0].data();
+    const time = Date.now();
+    if(whichPlayer == 0){ // Use loose equality because we expect whichPlayer to be a string
+        await coll.doc(docId).update({"lastPing": [time, lastPing[1]]})
+    } else {
+        await coll.doc(docId).update({"lastPing": [lastPing[0], time]})
+    }
     res.status(200).send({"inGame": inGame, "activePlayer": activePlayer, "board": board});
 }

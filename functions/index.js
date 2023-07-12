@@ -11,7 +11,7 @@ app.use(express.json());
 // routes:
 app.get('/join', joinRequest);
 app.get('/reset', resetGame);
-app.get('/gameState', getGameState);
+app.get('/gameState/:whichPlayer', getGameState);
 app.patch('/move', submitMove);
 
 export const api = onRequest(app);
