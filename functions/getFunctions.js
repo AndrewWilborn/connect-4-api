@@ -32,6 +32,7 @@ export async function joinRequest(req, res){
         }
     } else {
         playerId = null;
+        whichPlayer = 2;
     } 
     res.status(200).send({response: playerId, whichPlayer: player0or1})
 }
