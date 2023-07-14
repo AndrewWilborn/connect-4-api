@@ -8,7 +8,7 @@ export async function joinRequest(req, res){
     // There should be a way to get this by ID
     let { inGame, playerIds, lastPing } = game.docs[0].data() // Get current data from the database
     let playerId = null;
-    let player0or1 = null;
+    let whichPlayer = null;
     const time = Date.now();
     const mostRecentPing = lastPing.reduce((a, b) => Math.max(a, b), -Infinity)
     if(time - mostRecentPing > 10000) {
@@ -25,16 +25,16 @@ export async function joinRequest(req, res){
         playerId = Math.floor(Math.random() * 999999999) // Generate a playerId
         if(!playerIds[0]){ // update the database with the new playerId
             await coll.doc(docId).update({"playerIds": [playerId, playerIds[1]], lastPing: [time, lastPing[1]]})
-            player0or1 = 0;
+            whichPlayer = 0;
         } else {
             await coll.doc(docId).update({"playerIds": [playerIds[0], playerId], lastPing: [lastPing[0], time], "inGame": true})
-            player0or1 = 1;
+            whichPlayer = 1;
         }
     } else {
-        playerId = null;
+        playerId = -1;
         whichPlayer = 2;
     } 
-    res.status(200).send({response: playerId, whichPlayer: player0or1})
+    res.status(200).send({response: playerId, whichPlayer: whichPlayer})
 }
 
 export async function resetGame(req, res){
