@@ -59,7 +59,7 @@ export async function getGameState(req, res){
         } else{
             await coll.doc(docId).update({"lastPing": [time, lastPing[1]]})
         }
-    } else {
+    } else if(whichPlayer == 1) {
         if(time - 5000 > lastPing[0] && inGame){
             await coll.doc(docId).update({"lastPing": [lastPing[0], time], "activePlayer": 4})
         } else{
